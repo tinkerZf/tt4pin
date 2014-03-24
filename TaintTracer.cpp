@@ -190,6 +190,7 @@ VOID TaintTracer(INS ins)
 	case XED_ICLASS_BSF://line 2922
 	case XED_ICLASS_BSR:
 	case XED_ICLASS_MOV:
+		//break;
 		if(INS_OperandIsImmediate(ins, OP_1) ||
 			(INS_OperandIsReg(ins, OP_1) && REG_is_seg(INS_OperandReg(ins, OP_1)))) {
 			if(INS_OperandIsMemory(ins, OP_0)) {
@@ -633,6 +634,7 @@ VOID TaintTracer(INS ins)
 		}
 		break;
 	case XED_ICLASS_IMUL:// line 3768, and this is really horrible
+		//break;
 		if(INS_OperandIsImplicit(ins, OP_1)) {
 			if(INS_OperandIsMemory(ins, OP_0))
 				switch(INS_MemoryWriteSize(ins)) {
@@ -723,6 +725,7 @@ VOID TaintTracer(INS ins)
 					INS_InsertCall(ins,
 						IPOINT_BEFORE,
 						(AFUNPTR)m2r_binary_opl,
+						IARG_FAST_ANALYSIS_CALL,
 						IARG_UINT32, REG32_INDX(reg_dst),
 						IARG_MEMORYREAD_EA,
 						IARG_THREAD_ID,
@@ -731,6 +734,7 @@ VOID TaintTracer(INS ins)
 					INS_InsertCall(ins,
 						IPOINT_BEFORE,
 						(AFUNPTR)m2r_binary_opw,
+						IARG_FAST_ANALYSIS_CALL,
 						IARG_UINT32, REG16_INDX(reg_dst),
 						IARG_MEMORYREAD_EA,
 						IARG_THREAD_ID,
@@ -754,11 +758,13 @@ VOID TaintTracer(INS ins)
 	case XED_ICLASS_SETP:
 	case XED_ICLASS_SETS:
 	case XED_ICLASS_SETZ:
+		//break;
 		if(INS_MemoryOperandCount(ins) == 0) {
 			reg_dst = INS_OperandReg(ins, OP_0);
 			INS_InsertCall(ins,
 				IPOINT_BEFORE,
 				(AFUNPTR)r_clrb,
+				IARG_FAST_ANALYSIS_CALL,
 				IARG_UINT32, REG8_INDX(reg_dst),
 				IARG_THREAD_ID,
 				IARG_END);
@@ -1085,8 +1091,8 @@ VOID TaintTracer(INS ins)
 					IPOINT_BEFORE,
 					(AFUNPTR)_xadd_r2m_opl,
 					IARG_FAST_ANALYSIS_CALL,
-					IARG_UINT32, REG32_INDX(reg_src),
 					IARG_MEMORYWRITE_EA,
+					IARG_UINT32, REG32_INDX(reg_src),
 					IARG_THREAD_ID,
 					IARG_END);
 			else if(REG_is_gr32(reg_src))
@@ -1094,8 +1100,8 @@ VOID TaintTracer(INS ins)
 					IPOINT_BEFORE,
 					(AFUNPTR)_xadd_r2m_opw,
 					IARG_FAST_ANALYSIS_CALL,
-					IARG_UINT32, REG16_INDX(reg_src),
 					IARG_MEMORYWRITE_EA,
+					IARG_UINT32, REG16_INDX(reg_src),
 					IARG_THREAD_ID,
 					IARG_END);
 			else
@@ -1103,8 +1109,8 @@ VOID TaintTracer(INS ins)
 					IPOINT_BEFORE,
 					(AFUNPTR)_xadd_r2m_opb,
 					IARG_FAST_ANALYSIS_CALL,
-					IARG_UINT32, REG8_INDX(reg_src),
 					IARG_MEMORYWRITE_EA,
+					IARG_UINT32, REG8_INDX(reg_src),
 					IARG_THREAD_ID,
 					IARG_END);
 		}// end xadd mem, reg
@@ -1320,6 +1326,7 @@ VOID TaintTracer(INS ins)
 		}//end if mem
 		break;
 	case XED_ICLASS_PUSH:// line 4953
+		//break;
 		if(INS_OperandIsReg(ins, OP_0)) {
 			reg_src = INS_OperandReg(ins, OP_0);
 			if(REG_is_gr32(reg_src))
@@ -1441,6 +1448,7 @@ VOID TaintTracer(INS ins)
 			IARG_END);
 		break;
 	case XED_ICLASS_CALL_NEAR:// line 5144
+		//break;
 		if(INS_OperandIsImmediate(ins, OP_0)) {// relative target
 			if(INS_OperandWidth(ins, OP_0) == MEM_LONG_LEN)
 				INS_InsertCall(ins,
@@ -1491,6 +1499,7 @@ VOID TaintTracer(INS ins)
 		}
 		break;
 	case XED_ICLASS_LEAVE:// line 5218
+		//break;
 		reg_dst = INS_OperandReg(ins, OP_3);
 		reg_src = INS_OperandReg(ins, OP_2);
 		if(REG_is_gr32(reg_dst)) {
@@ -1530,6 +1539,7 @@ VOID TaintTracer(INS ins)
 		}
 		break;
 	case XED_ICLASS_LEA://5267
+		//break;
 		reg_base = INS_MemoryBaseReg(ins);
 		reg_indx = INS_MemoryIndexReg(ins);
 		reg_dst  = INS_OperandReg(ins, OP_0);

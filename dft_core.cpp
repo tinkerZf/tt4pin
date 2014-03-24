@@ -35,6 +35,7 @@ r_clrw(unsigned int reg, THREADID tid)
 void PIN_FAST_ANALYSIS_CALL
 r_clrb(unsigned int reg, THREADID tid)
 {
+	OutFile << tid << ":" << reg << endl;
 	thread_info[tid].reg_taint[reg].clear();
 }
 
@@ -81,6 +82,7 @@ r2r_binary_opw(unsigned int dst, unsigned int src, THREADID tid)
 void PIN_FAST_ANALYSIS_CALL
 r2r_binary_opb(unsigned int dst, unsigned int src, THREADID tid)
 {
+	//return;
 	thread_info[tid].reg_taint[dst].insert(thread_info[tid].reg_taint[src].begin(), thread_info[tid].reg_taint[src].end());
 }
 
@@ -137,12 +139,14 @@ void PIN_FAST_ANALYSIS_CALL
 r2m_binary_opb(ADDRINT dst, unsigned int src, THREADID tid)
 {
 	//
+	//return;
 	Taint &t = thread_info[tid].reg_taint[src];
 	if(t.size() != 0) {
 		taintMap[dst].insert(t.begin(), t.end());
 	} else {
-		if(taintMap.find(dst) != taintMap.end())
+		if(taintMap.find(dst) != taintMap.end()) {
 			taintMap.erase(dst);
+		}
 	}
 }
 
